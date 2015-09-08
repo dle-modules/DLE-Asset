@@ -33,6 +33,22 @@ class dleAsset {
 	}
 
 	/**
+	 * [addFile description]
+	 * @param [type]  $filePath [description]
+	 * @param boolean $isMin    [description]
+	 */
+	public static function addFile($filePath, $isMin = false) {
+		$path  = self::getRealPath(array($filePath));
+		$arMin = array();
+		$arMin = self::processFile($path[0], false, $isMin, $arMin);
+		// Если сжатие включено — воспользуемся этой хорошей возможностью.
+		if ($isMin) {
+			self::echoCompressed($arMin);
+		}
+
+	}
+
+	/**
 	 * @param array $arPath
 	 * @param array $excludes
 	 * @param bool  $isMin
@@ -42,57 +58,88 @@ class dleAsset {
 			// Сканируем папку
 			$f = scandir($folder);
 
-			// Получаем относительный путь
-			$localFolder = str_replace($_SERVER['DOCUMENT_ROOT'], '', $folder);
-
-			// Массивы на случай включения сжатия и объединения js и css
-			$arCssMin = $arJsMin = array();
-
 			// Пробегаем по массиву файлов
+			$arMin = array();
 			foreach ($f as $file) {
 				// Берём только те файлы, у которых нет исключающего префикса
 				if (!self::strposArr($file, $excludes)) {
-					// Берём только css и js файлы
-					if (preg_match("/(.*?)\.(css|js)$/im", $file, $matches)) {
-						// Добавляем параметр, если нужно т.к. файлы кешируются браузером
-						$v          = (!$isMin) ? fileatime($folder . $file) : 1;
-						$fileToShow = $localFolder . $matches[0];
+					// Обрабатываем файлы
+					$arMin = self::processFile($file, $folder, $isMin, $arMin);
 
-						switch ($matches[2]) {
-							case 'css':
-								// добавляем css-файл
-								if ($isMin) {
-									$arCssMin[] = $fileToShow;
-								} else {
-									echo '<link rel="stylesheet" href="' . $fileToShow . '?v=' . $v . '" />';
-									echo "\n\t\t";
-								}
-								break;
-
-							case 'js':
-								// добавляем js-файл
-								//
-								if ($isMin) {
-									$arJsMin[] = $fileToShow;
-								} else {
-									echo '<script src="' . $fileToShow . '?v=' . $v . '"></script>';
-									echo "\n\t\t";
-								}
-								break;
-						}
-					}
 				}
 			}
 			// Если сжатие включено — воспользуемся этой хорошей возможностью.
 			if ($isMin) {
-				if (!empty($arCssMin)) {
-					echo '<link rel="stylesheet" href="/engine/classes/min/index.php?charset=utf-8&amp;f=' . implode(',', $arCssMin) . '" />';
-				}
-
-				if (!empty($arJsMin)) {
-					echo '<script src="/engine/classes/min/index.php?charset=utf-8&amp;f=' . implode(',', $arJsMin) . '"></script>';
-				}
+				self::echoCompressed($arMin);
 			}
+		}
+	}
+
+	/**
+	 * [processFile description]
+	 * @param  string  $file   [description]
+	 * @param  string  $folder [description]
+	 * @param  boolean $isMin  [description]
+	 * @param  array   $arMin  [description]
+	 * @return [type]          [description]
+	 */
+	public static function processFile($file = '', $folder = '', $isMin = false, $arMin = array()) {
+		if (!is_array($arMin)) {
+			$arMin = array();
+		}
+
+		// Получаем путь к файлам
+		if ($folder != '') {
+			$localFolder = str_replace($_SERVER['DOCUMENT_ROOT'], '', $folder);
+		} else {
+			$_sf         = $file;
+			$file        = basename($file);
+			$localFolder = str_replace(array($_SERVER['DOCUMENT_ROOT'], $file), '', $_sf);
+			$folder      = $_SERVER['DOCUMENT_ROOT'] . $localFolder;
+		}
+		// Берём только css и js файлы
+		if (preg_match("/(.*?)\.(css|js)$/im", $file, $matches)) {
+			// Добавляем параметр, если нужно т.к. файлы кешируются браузером
+			$v          = (!$isMin) ? fileatime($folder . $file) : 1;
+			$fileToShow = $localFolder . $matches[0];
+
+			switch ($matches[2]) {
+				case 'css':
+					// добавляем css-файл
+					if ($isMin) {
+						$arMin['css'][] = $fileToShow;
+					} else {
+						echo '<link rel="stylesheet" href="' . $fileToShow . '?v=' . $v . '" />';
+						echo "\n\t\t";
+					}
+					break;
+
+				case 'js':
+					// добавляем js-файл
+					if ($isMin) {
+						$arMin['js'][] = $fileToShow;
+					} else {
+						echo '<script src="' . $fileToShow . '?v=' . $v . '"></script>';
+						echo "\n\t\t";
+					}
+					break;
+			}
+		}
+
+		return $arMin;
+	}
+	/**
+	 * [echoCompressed description]
+	 * @param  array  $arMin [description]
+	 * @return [type]        [description]
+	 */
+	public static function echoCompressed($arMin = array()) {
+		if (isset($arMin['css']) && !empty($arMin['css'])) {
+			echo '<link rel="stylesheet" href="/engine/classes/min/index.php?charset=utf-8&amp;f=' . implode(',', $arMin['css']) . '" />';
+		}
+
+		if (isset($arMin['js']) && !empty($arMin['js'])) {
+			echo '<script src="/engine/classes/min/index.php?charset=utf-8&amp;f=' . implode(',', $arMin['js']) . '"></script>';
 		}
 	}
 
