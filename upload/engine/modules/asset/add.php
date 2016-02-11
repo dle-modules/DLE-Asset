@@ -14,7 +14,7 @@ email:   pafnuty10@gmail.com
 if (!defined('DATALIFEENGINE')) { die("Go fuck yourself!"); }
 
 $assetFolder = !empty($folder) ? str_replace('{THEME}', '/templates/' . $config['skin'], $folder) : false;
-$assetIgnore = !empty($ignore) ? str_replace('{THEME}', '/templates/' . $config['skin'], $ignore) : array();
+$assetIgnore = !empty($ignore) ? str_replace('{THEME}', '/templates/' . $config['skin'], $ignore) : '';
 
 if ($assetFolder) {
 	
