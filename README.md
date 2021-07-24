@@ -25,7 +25,7 @@
 {include file="engine/modules/asset/add.php?folder={THEME}/js/"}
 ```
 Или так:
-```
+```smarty
 {include file="engine/modules/asset/add.php?folder={THEME}/css/,{THEME}/js/&ignore=main"}
 ```
 
