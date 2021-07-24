@@ -11,14 +11,16 @@ email:   pafnuty10@gmail.com
 =============================================================================
  */
 
-class dleAsset {
+class dleAsset
+{
 
 	/**
 	 * @param array   $folders
 	 * @param array   $excludes
 	 * @param boolean $compress
 	 */
-	public static function add($folders, $excludes = array('-', '_'), $compress = false) {
+	public static function add($folders, $excludes = array('-', '_'), $compress = false)
+	{
 		// Дополняем переданные префиксы префиксами по умолчанию
 		$excludes = array_merge($excludes, array('-', '_'));
 
@@ -37,7 +39,8 @@ class dleAsset {
 	 * @param [type]  $filePath [description]
 	 * @param boolean $isMin    [description]
 	 */
-	public static function addFile($filePath, $isMin = false) {
+	public static function addFile($filePath, $isMin = false)
+	{
 		$path  = self::getRealPath(array($filePath));
 		$arMin = array();
 		$arMin = self::processFile($path[0], false, $isMin, $arMin);
@@ -45,7 +48,6 @@ class dleAsset {
 		if ($isMin) {
 			self::echoCompressed($arMin);
 		}
-
 	}
 
 	/**
@@ -53,7 +55,8 @@ class dleAsset {
 	 * @param array $excludes
 	 * @param bool  $isMin
 	 */
-	public static function addAssets($arPath, $excludes, $isMin) {
+	public static function addAssets($arPath, $excludes, $isMin)
+	{
 		foreach ($arPath as $folder) {
 			// Сканируем папку
 			$f = scandir($folder);
@@ -65,7 +68,6 @@ class dleAsset {
 				if (!self::strposArr($file, $excludes)) {
 					// Обрабатываем файлы
 					$arMin = self::processFile($file, $folder, $isMin, $arMin);
-
 				}
 			}
 			// Если сжатие включено — воспользуемся этой хорошей возможностью.
@@ -83,7 +85,8 @@ class dleAsset {
 	 * @param  array   $arMin  [description]
 	 * @return [type]          [description]
 	 */
-	public static function processFile($file = '', $folder = '', $isMin = false, $arMin = array()) {
+	public static function processFile($file = '', $folder = '', $isMin = false, $arMin = array())
+	{
 		if (!is_array($arMin)) {
 			$arMin = array();
 		}
@@ -133,7 +136,8 @@ class dleAsset {
 	 * @param  array  $arMin [description]
 	 * @return [type]        [description]
 	 */
-	public static function echoCompressed($arMin = array()) {
+	public static function echoCompressed($arMin = array())
+	{
 		if (isset($arMin['css']) && !empty($arMin['css'])) {
 			echo '<link rel="stylesheet" href="/engine/classes/min/index.php?charset=utf-8&amp;f=' . implode(',', $arMin['css']) . '" />';
 		}
@@ -149,14 +153,14 @@ class dleAsset {
 	 * @return array
 	 */
 
-	protected static function getRealPath($array) {
+	protected static function getRealPath($array)
+	{
 
 		foreach ($array as $k => $path) {
 			$array[$k] = $_SERVER['DOCUMENT_ROOT'] . $path;
 		}
 
 		return $array;
-
 	}
 
 	/**
@@ -167,7 +171,8 @@ class dleAsset {
 	 *
 	 * @return bool
 	 */
-	protected static function strposArr($str, $arr) {
+	protected static function strposArr($str, $arr)
+	{
 		foreach ($arr as $v) {
 			if (($pos = strpos($str, $v)) !== false && $pos == '0') {
 				return true;
@@ -177,7 +182,7 @@ class dleAsset {
 		return false;
 	}
 
-	private function __construct() {
+	private function __construct()
+	{
 	}
-
 }
