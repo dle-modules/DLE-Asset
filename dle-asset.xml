@@ -3,10 +3,10 @@
 	<name>DLE-Asset</name>
 	<description>Модуль для автоматического подключения стилей и скриптов в шаблон</description>
 	<icon></icon>
-	<version>2.0.0</version>
+	<version>2.0.1</version>
 	<dleversion>14.0</dleversion>
 	<versioncompare>greater</versioncompare>
-	<upgradeurl>https://raw.githubusercontent.com/zettend/DLE-Asset/master/update.json</upgradeurl>
+	<upgradeurl>https://gitcdn.link/repo/DLE-Store/DLE-Asset/master/update.json</upgradeurl>
 	<filedelete>0</filedelete>
 	<needplugin></needplugin>
 	<mnotice>0</mnotice>
