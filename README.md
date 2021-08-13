@@ -5,7 +5,7 @@
 ![DLE](https://img.shields.io/badge/DLE-14.x-green.svg?style=flat-square "DLE Version")
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/pafnuty/DLE-Asset/blob/master/LICENSE)
 
-## Назнчение
+## Назначение
 Модуль предназначен для лёгкого подключения стилей и скриптов к шаблону сайта.
 
 ## Преимущества
